@@ -3,6 +3,7 @@ package com.projetoestudos.dscommerce.entities;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,12 +20,16 @@ public class Product {
     private Double price;
     private String imgUrl;
 
-    /* @JoinTable = define a tabela de associação SQL */
     @ManyToMany
     @JoinTable(name = "tb_product_category",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
+
+    /* @JoinTable = define a tabela de associação SQL */
+    /* o id não pode repetir na terceira tabela auxiliar, utilizar o tipo set */
+    @OneToMany(mappedBy = "id.product")
+    private Set<OrderItem> items = new HashSet<>();
 
     public Product(){
     }
@@ -79,5 +84,13 @@ public class Product {
 
     public Set<Category> getCategories() {
         return categories;
+    }
+
+    public Set<OrderItem> getItems() {
+        return items;
+    }
+
+    public List<Product> getProducts () {
+        return items.stream().map(x -> x.getProduct()).toList();
     }
 }

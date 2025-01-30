@@ -6,6 +6,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/* para definir por que tabela começar olhar pelas extremidades
+*  e tem que ser independente e do outro lado tem que estar o muitos (*)
+ */
 
 @Entity
 @Table(name = "tb_user")
