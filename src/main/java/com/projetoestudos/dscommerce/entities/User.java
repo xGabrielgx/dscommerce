@@ -5,9 +5,10 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /* para definir por que tabela começar olhar pelas extremidades
-*  e tem que ser independente e do outro lado tem que estar o muitos (*)
+ *  e tem que ser independente e do outro lado tem que estar o muitos (*)
  */
 
 @Entity
@@ -28,7 +29,7 @@ public class User {
     @OneToMany(mappedBy = "client")
     private List<Order> orders = new ArrayList<>();
 
-    public User(){
+    public User() {
     }
 
     public User(Long id, String name, String email, String phone, LocalDate birthDate, String password) {
@@ -90,5 +91,19 @@ public class User {
 
     public List<Order> getOrders() {
         return orders;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
