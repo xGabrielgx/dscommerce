@@ -1,12 +1,18 @@
 package com.projetoestudos.dscommerce.services;
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.projetoestudos.dscommerce.dto.ProductDTO;
 import com.projetoestudos.dscommerce.entities.Product;
 import com.projetoestudos.dscommerce.repositories.ProductRepository;
+import com.projetoestudos.dscommerce.services.exceptions.DatabaseException;
+import com.projetoestudos.dscommerce.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,16 +25,16 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
-        Product product = repository.findById(id).get();
+        Product product = repository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Recurso não encontrado"));
         return new ProductDTO(product);
-
+    }
         /* o optional retorna um objeto product, que está dentro do optional e, usamos o get para obtermos */
-        /*
+        /* contéudo acima ^^^^^^^^
         Optional<Product> result = repository.findById(id);
         Product product = result.get();
         ProductDTO dto = new ProductDTO(product);
         return dto; */
-    }
 
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAll(Pageable pageable) {
@@ -49,16 +55,29 @@ public class ProductService {
     @Transactional
     public ProductDTO updtade(Long id, ProductDTO dto) {
 
-        Product entity = repository.getReferenceById(id);
-        copyDtoToEntity(dto, entity);
-        entity = repository.save(entity);
+        try {
+            Product entity = repository.getReferenceById(id);
+            copyDtoToEntity(dto, entity);
+            entity = repository.save(entity);
+            return new ProductDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Recurso não encontrado");
+        }
 
-        return new ProductDTO(entity);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
-        repository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Recurso não encontrado!");
+        }
+
+        try {
+            repository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Falha na integridade referencial");
+        }
+
     }
 
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
