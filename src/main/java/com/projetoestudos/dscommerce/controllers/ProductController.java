@@ -1,6 +1,7 @@
 package com.projetoestudos.dscommerce.controllers;
 
 import com.projetoestudos.dscommerce.dto.ProductDTO;
+import com.projetoestudos.dscommerce.dto.ProductMinDTO;
 import com.projetoestudos.dscommerce.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,10 @@ public class  ProductController {
 
     // Adicionando o name deixa ele como uma consulta opcional, podendo buscar todos os produtos ou produtos selecionandos partes do nome
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> findAll(
+    public ResponseEntity<Page<ProductMinDTO>> findAll(
             @RequestParam(name = "name", defaultValue = "") String name,
             Pageable pageable) {
-        Page<ProductDTO> dto = service.findAll(name, pageable);
+        Page<ProductMinDTO> dto = service.findAll(name, pageable);
         return ResponseEntity.ok(dto);
     }
 
