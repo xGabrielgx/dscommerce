@@ -1,8 +1,10 @@
 package com.projetoestudos.dscommerce.services;
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import com.projetoestudos.dscommerce.dto.CategoryDTO;
 import com.projetoestudos.dscommerce.dto.ProductDTO;
 import com.projetoestudos.dscommerce.dto.ProductMinDTO;
+import com.projetoestudos.dscommerce.entities.Category;
 import com.projetoestudos.dscommerce.entities.Product;
 import com.projetoestudos.dscommerce.repositories.ProductRepository;
 import com.projetoestudos.dscommerce.services.exceptions.DatabaseException;
@@ -86,6 +88,14 @@ public class ProductService {
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setImgUrl(dto.getImgUrl());
+
+        entity.getCategories().clear();
+        for (CategoryDTO catDTO : dto.getCategories()) {
+            Category cat = new Category();
+            cat.setId(catDTO.getId());
+            cat.setName(catDTO.getName());
+            entity.getCategories().add(cat);
+        }
     }
 
 }
