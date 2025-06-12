@@ -4,27 +4,31 @@ import com.projetoestudos.dscommerce.entities.OrderItem;
 
 public class OrderItemDTO {
 
-    private Long productID;
+    private Long productId;
     private String name;
     private Double price;
     private Integer quantity;
 
-    public OrderItemDTO(Long productID, String name, Double price, Integer quantity) {
-        this.productID = productID;
+    public OrderItemDTO () {
+
+    }
+
+    public OrderItemDTO(Long productId, String name, Double price, Integer quantity) {
+        this.productId = productId;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
     }
 
     public OrderItemDTO(OrderItem entity) {
-        productID = entity.getProduct().getId();
+        productId = entity.getProduct().getId();
         name = entity.getProduct().getName();
         price = entity.getPrice();
         quantity = entity.getQuantity();
     }
 
-    public Long getProductID() {
-        return productID;
+    public Long getProductId() {
+        return productId;
     }
 
     public String getName() {
